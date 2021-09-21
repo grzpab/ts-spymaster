@@ -1,0 +1,34 @@
+{
+  "name": "ts-spymaster",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/index.ts",
+  "author": "Gregory P. Pabian",
+  "scripts": {
+    "lint": "yarn eslint ./src/**/*.ts",
+    "lint:fix": "yarn eslint ./src/**/*.ts test/**/*.ts --fix",
+    "test:unit": "mocha",
+    "test:coverage": "nyc mocha"
+  },
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "1.0.1",
+    "@types/chai": "4.2.14",
+    "@types/mocha": "8.2.0",
+    "@types/node": "14.14.25",
+    "@types/sinon": "10.0.3",
+    "@typescript-eslint/eslint-plugin": "4.14.2",
+    "@typescript-eslint/parser": "4.14.2",
+    "chai": "4.3.0",
+    "eslint": "7.19.0",
+    "mocha": "8.2.1",
+    "sinon": "11.1.2",
+    "nyc": "15.1.0",
+    "source-map-support": "0.5.19",
+    "ts-essentials": "7.0.1",
+    "ts-node": "9.1.1",
+    "typescript": "4.1.3"
+  }
+}
