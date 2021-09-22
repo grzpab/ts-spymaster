@@ -16,13 +16,13 @@ export type KeyToFunctionDictionary = Readonly<{
 }>;
 
 export abstract class SpyManager<A extends KeyToFunctionDictionary> {
-    protected abstract buildSpyProxy<K1 extends keyof A>(fnc: A[K1]) : SpyProxy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>>;
+    protected abstract buildSpyProxy<K extends keyof A>(fnc: A[K]) : SpyProxy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>>;
 
     protected spy_proxies: Map<keyof A, SpyProxy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>>> = new Map();
 
-    protected get<K1 extends keyof A>(
-        key: K1,
-    ): SpyProxy<Parameters<A[K1]>, ReturnType<A[K1]>> {
+    protected get<K extends keyof A>(
+        key: K,
+    ): SpyProxy<Parameters<A[K]>, ReturnType<A[K]>> {
         const spy = this.spy_proxies.get(key);
 
         if (!spy) {
@@ -32,9 +32,9 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary> {
         return spy;
     }
 
-    public setDefaultSpy<K1 extends keyof A>(
-        key: K1,
-        fnc: A[K1]
+    public setDefaultSpy<K extends keyof A>(
+        key: K,
+        fnc: A[K]
     ): SpyManager<A> {
         const spyProxy = this.buildSpyProxy(fnc);
 
@@ -43,17 +43,17 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary> {
         return this;
     }
 
-    public getCurrentSpy<K1 extends keyof A>(
-        key: K1,
+    public getCurrentSpy<K extends keyof A>(
+        key: K,
     ): SinonSpy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>> {
         const spy_proxy = this.get(key);
 
         return spy_proxy.getCurrentSpy();
     }
 
-    public setCurrentSpy<K1 extends keyof A>(
-        key: K1,
-        fnc: A[K1]
+    public setCurrentSpy<K extends keyof A>(
+        key: K,
+        fnc: A[K]
     ): SpyManager<A> {
         const spy_proxy = this.get(key);
 
@@ -64,8 +64,8 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary> {
         return this;
     }
 
-    public restoreDefaultSpy<K1 extends keyof A>(
-        key: K1,
+    public restoreDefaultSpy<K extends keyof A>(
+        key: K,
     ): SpyManager<A> {
         const spy_proxy = this.get(key);
 
@@ -82,8 +82,8 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary> {
         return this;
     }
 
-    public resetHistory<K1 extends keyof A>(
-        key: K1,
+    public resetHistory<K extends keyof A>(
+        key: K,
     ): SpyManager<A> {
         const spy_proxy = this.get(key);
 

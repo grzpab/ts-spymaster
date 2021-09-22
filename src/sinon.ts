@@ -47,8 +47,8 @@ export class SinonSpyProxy<A extends any[] = any[], RV = any> implements SpyProx
 }
 
 export class SinonSpyManager<A extends KeyToFunctionDictionary> extends SpyManager<A> {
-    protected buildSpyProxy<K1 extends keyof A>(
-        fnc: A[K1],
+    protected buildSpyProxy<K extends keyof A>(
+        fnc: A[K],
     ): SpyProxy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>> {
         const spy: SinonSpy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>> = fake(fnc) as any;
 

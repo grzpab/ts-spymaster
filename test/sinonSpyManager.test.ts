@@ -158,6 +158,4 @@ describe('SpyManager', () => {
             spyManager.getCurrentSpy('fnc');
         });
     });
-
-
 });
