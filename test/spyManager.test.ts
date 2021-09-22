@@ -4,9 +4,9 @@ import {
 } from '../src/sinon';
 
 describe('SpyManager', () => {
-    type SpiedOnFunctions = {
+    type SpiedOnFunctions = Readonly<{
         fnc: (n: number) => number,
-    }
+    }>;
 
 
     it('should allow for setting default, current spies and restoring the default ones', () => {
@@ -150,4 +150,14 @@ describe('SpyManager', () => {
             assert.equal(spy.callCount, 0);
         }
     });
+
+    it('should throw an error if the key is not defined yet', () => {
+        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
+
+        assert.throw(() => {
+            spyManager.getCurrentSpy('fnc');
+        });
+    });
+
+
 });
