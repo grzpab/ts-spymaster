@@ -1,5 +1,7 @@
 import { assert } from 'chai';
-import { SpyManager } from '../src';
+import {
+    SinonSpyManager,
+} from '../src/sinon';
 
 describe('SpyManager', () => {
     type SpiedOnFunctions = {
@@ -8,7 +10,7 @@ describe('SpyManager', () => {
 
 
     it('should allow for setting default, current spies and restoring the default ones', () => {
-        const spyManager = new SpyManager<SpiedOnFunctions>();
+        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
 
         {
             spyManager.setDefaultSpy('fnc', (n) => n);
@@ -45,7 +47,7 @@ describe('SpyManager', () => {
     });
 
     it('should allow for restoring default spies', () => {
-        const spyManager = new SpyManager<SpiedOnFunctions>();
+        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
 
         {
             spyManager.setDefaultSpy('fnc', (n) => n / 2);
@@ -86,7 +88,7 @@ describe('SpyManager', () => {
             fnc: SpiedOnFunctions['fnc'],
         };
 
-        const spyManager = new SpyManager<SpiedOnFunctions>();
+        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
 
         spyManager.setDefaultSpy('fnc', (n) => n ** 2);
 
@@ -114,6 +116,38 @@ describe('SpyManager', () => {
             const value = service.fnc(9);
 
             assert.equal(value, 81);
+        }
+    });
+
+    it('should allow for resetting history', () => {
+        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
+
+        spyManager.setDefaultSpy('fnc', (n) => n);
+
+        {
+            const spy = spyManager.getCurrentSpy('fnc');
+
+            const value = spy(10);
+
+            assert.equal(value, 10);
+            assert.equal(spy.callCount, 1);
+
+            spyManager.resetHistory('fnc');
+
+            assert.equal(spy.callCount, 0);
+        }
+
+        {
+            const spy = spyManager.getCurrentSpy('fnc');
+
+            const value = spy(10);
+
+            assert.equal(value, 10);
+            assert.equal(spy.callCount, 1);
+
+            spyManager.resetHistories();
+
+            assert.equal(spy.callCount, 0);
         }
     });
 });

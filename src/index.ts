@@ -1,48 +1,23 @@
 import { fake, SinonSpy } from 'sinon';
 
-export class SpyProxy<A extends any[] = any[], RV = any> {
-    private _currentSpy: SinonSpy<A, RV>;
-
-    public constructor(
-        private readonly _defaultSpy: SinonSpy<A, RV>,
-    ) {
-        this._currentSpy = _defaultSpy;
-    }
-
-    public setCurrentSpy(
+export interface SpyProxy<A extends any[], RV> {
+    setCurrentSpy(
         _currentSpy: SinonSpy<A, RV>
-    ): SpyProxy<A, RV> {
-        this._currentSpy = _currentSpy;
+    ): SpyProxy<A, RV>;
 
-        return this;
-    }
+    restoreDefaultSpy(): SpyProxy<A, RV>;
 
-    public restoreDefaultSpy(): SpyProxy<A, RV> {
-        this._currentSpy = this._defaultSpy;
-
-        return this;
-    }
-
-    public getCurrentSpy(): SinonSpy<A, RV> {
-        return new Proxy(this._currentSpy, {
-            apply: (target, thisArg, argArray) => {
-                return this._currentSpy.apply(thisArg, argArray);
-            },
-        });
-    }
-
-    public resetHistory(): SpyProxy<A, RV> {
-        this._currentSpy.resetHistory();
-
-        return this;
-    }
+    getCurrentSpy(): SinonSpy<A, RV>;
+    resetHistory(): SpyProxy<A, RV>;
 }
 
-export class SpyManager<
-    A extends {
-        [key in string]: (...args: any) => any
-    }
-> {
+export type KeyToFunctionDictionary = Readonly<{
+    [key in string]: (...args: any) => any;
+}>;
+
+export abstract class SpyManager<A extends KeyToFunctionDictionary> {
+    protected abstract buildSpyProxy<K1 extends keyof A>(fnc: A[K1]) : SpyProxy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>>;
+
     protected spy_proxies: Map<keyof A, SpyProxy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>>> = new Map();
 
     protected get<K1 extends keyof A>(
@@ -61,8 +36,7 @@ export class SpyManager<
         key: K1,
         fnc: A[K1]
     ): SpyManager<A> {
-        const spy: SinonSpy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>> = fake(fnc) as any;
-        const spyProxy = new SpyProxy(spy);
+        const spyProxy = this.buildSpyProxy(fnc);
 
         this.spy_proxies.set(key, spyProxy);
 
