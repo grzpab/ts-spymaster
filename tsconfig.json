@@ -20,7 +20,9 @@
         "lib": [
             "es2020"
         ],
-        "baseUrl": "."
+        "baseUrl": ".",
+        "strict": false,
+        "removeComments": true
     },
     "include": [
         "src/**/*.ts",

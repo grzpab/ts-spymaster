@@ -1,7 +1,7 @@
 {
   "name": "@grzpab/ts-spymaster",
   "version": "0.0.1",
-  "description": "",
+  "description": "A spymaster library for TypeScript projects",
   "main": "dist/index.ts",
   "types": "dist/index.d.ts",
   "author": "grzpab",
