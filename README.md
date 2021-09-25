@@ -3,14 +3,14 @@ A spymaster library for TypeScript projects.
 
 ## Context
 During testing, developers usually want to know that a particular function:
-* has been called a predefined number of times,
-* has been called with predefined attributes,
-* has returned predefined values.
+* was called a predefined number of times,
+* was called with predefined attributes,
+* returned predefined values.
 
-Most coders achieve that using _spies_, and it has been a standard practise for some time now. What the TS community misses, in the opinion of the creator of this library, is:
+Most coders achieve that using _spies_, which has been a standard practice for some time now. What the TS community misses, in the opinion of the creator of this library, is:
 * a component that manages all the spies,
-* a straighforward way to exchange spies in tests,
-* a simple way to reset all spies after a test have passed.
+* a straightforward way to exchange spies in tests,
+* a simple way to reset all spies after a test has passed.
 
 This library provided this and much more.
 
@@ -23,13 +23,13 @@ The library is agnostic towards test frameworks, meaning you can use virtually a
 
 ### SpyProxy
 The `SpyProxy` interface serves as a blueprint for a spy proxy. A spy proxy holds the following spies:
-* the default spy (one that the proxy was constructed with),
+* the default spy (you construct the proxy with it),
 * the current spy (initially the default spy, can be changed to a different one).
 
-Developers can change the current spy in test runtime and later, restore the proxy to use the default spy. This way the spy proxy proxies calls to the intended spy at the time. The spy may also reset the spy history.
+Developers can change the current spy at any time in runtime. Later, they can restore the proxy to use the default spy. This way the structure can proxy calls to the intended spy at the time. The spy may also reset the spy history.
 
 ### SpyManager
-The `SpyManager` abstract class holds all the spy proxies. It allows for setting up proxies, restoring all proxies to their default spies and resetting the history of all the spies.
+The `SpyManager` abstract class holds all the spy proxies. It allows for setting up proxies, having all proxies use default spies, and resetting the history of all the spies.
 
 ## Components
 
