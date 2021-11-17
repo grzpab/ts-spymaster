@@ -47,11 +47,11 @@ import { SinonSpyManager } from '@grzpab/ts-spymaster/sinon';
 
 // the setup phase
 // setting up the spy manager and 
-type SpiedOnFunctions = Readonly<{
+type Functions = Readonly<{
 	fnc: (n: number) => number,
 }>;
 
-const spyManager = new SinonSpyManager<SpiedOnFunctions>();
+const spyManager = new SinonSpyManager<Functions>();
 spyManager.setDefaultSpy('fnc', (n) => n);
 
 // the pre-test phase
