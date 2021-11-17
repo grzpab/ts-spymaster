@@ -25,7 +25,7 @@ export abstract class SpyManager<
     P extends Parameters<A[KA]> = Parameters<A[KA]>,
     R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
 > {
-    protected abstract buildSpyProxy<K extends KA>(fnc: A[K]) : SpyProxy<P, R>;
+    protected abstract buildSpyProxy(fnc: A[KA]) : SpyProxy<P, R>;
 
     protected spy_proxies: Map<KA, SpyProxy<P, R>> = new Map();
 

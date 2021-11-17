@@ -8,7 +8,7 @@ import {
     SpyProxy,
 } from './index';
 
-export class SinonSpyProxy<A extends any[] = any[], RV = any> implements SpyProxy<A, RV>{
+export class SinonSpyProxy<A extends any[] = any[], RV = any> implements SpyProxy<A, RV> {
     private _currentSpy: SinonSpy<A, RV>;
 
     public constructor(
@@ -18,7 +18,7 @@ export class SinonSpyProxy<A extends any[] = any[], RV = any> implements SpyProx
     }
 
     public setCurrentSpy(
-        _currentSpy: SinonSpy<A, RV>
+        _currentSpy: SinonSpy<A, RV>,
     ): SpyProxy<A, RV> {
         this._currentSpy = _currentSpy;
 
@@ -33,7 +33,11 @@ export class SinonSpyProxy<A extends any[] = any[], RV = any> implements SpyProx
 
     public getCurrentSpy(): SinonSpy<A, RV> {
         return new Proxy(this._currentSpy, {
-            apply: (target, thisArg, argArray) => {
+            apply: (
+                target,
+                thisArg,
+                argArray,
+            ) => {
                 return this._currentSpy.apply(thisArg, argArray);
             },
         });
@@ -46,11 +50,15 @@ export class SinonSpyProxy<A extends any[] = any[], RV = any> implements SpyProx
     }
 }
 
-export class SinonSpyManager<A extends KeyToFunctionDictionary> extends SpyManager<A> {
-    protected buildSpyProxy<K extends keyof A>(
-        fnc: A[K],
-    ): SpyProxy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>> {
-        const spy: SinonSpy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>> = fake(fnc) as any;
+export class SinonSpyManager<A extends KeyToFunctionDictionary,
+    KA extends keyof A = keyof A,
+    P extends Parameters<A[KA]> = Parameters<A[KA]>,
+    R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
+    > extends SpyManager<A, KA, P, R> {
+    protected buildSpyProxy(
+        fnc: A[KA],
+    ): SpyProxy<P, R> {
+        const spy: SinonSpy<P, R> = fake(fnc) as any;
 
         return new SinonSpyProxy(spy);
     }
