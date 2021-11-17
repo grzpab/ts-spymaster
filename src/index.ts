@@ -22,10 +22,12 @@ export type KeyToFunctionDictionary = Readonly<{
 export abstract class SpyManager<
     A extends KeyToFunctionDictionary,
     KA extends keyof A = keyof A,
+    P extends Parameters<A[KA]> = Parameters<A[KA]>,
+    R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
 > {
-    protected abstract buildSpyProxy<K extends KA>(fnc: A[K]) : SpyProxy<Parameters<A[KA]>, ReturnType<A[KA]>>;
+    protected abstract buildSpyProxy<K extends KA>(fnc: A[K]) : SpyProxy<P, R>;
 
-    protected spy_proxies: Map<KA, SpyProxy<Parameters<A[KA]>, ReturnType<A[KA]>>> = new Map();
+    protected spy_proxies: Map<KA, SpyProxy<P, R>> = new Map();
 
     protected get<K extends KA>(
         key: K,
@@ -52,7 +54,7 @@ export abstract class SpyManager<
 
     public getCurrentSpy<K extends KA>(
         key: K,
-    ): SinonSpy<Parameters<A[KA]>, ReturnType<A[KA]>> {
+    ): SinonSpy<Parameters<A[K]>, ReturnType<A[K]>> {
         const spy_proxy = this.get(key);
 
         return spy_proxy.getCurrentSpy();
@@ -64,7 +66,7 @@ export abstract class SpyManager<
     ): SpyManager<A> {
         const spy_proxy = this.get(key);
 
-        const spy: SinonSpy<Parameters<A[keyof A]>, ReturnType<A[keyof A]>> = fake(fnc) as any;
+        const spy: SinonSpy<Parameters<A[K]>, ReturnType<A[K]>> = fake(fnc) as any;
 
         spy_proxy.setCurrentSpy(spy);
 
