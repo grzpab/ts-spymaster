@@ -19,7 +19,7 @@ export type KeyToFunctionDictionary = Readonly<{
     [key in string]: (...args: any) => any;
 }>;
 
-export abstract class SpyManager<A extends KeyToFunctionDictionary,
+export abstract class Spymaster<A extends KeyToFunctionDictionary,
     KA extends keyof A = keyof A,
     P extends Parameters<A[KA]> = Parameters<A[KA]>,
     R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
@@ -43,7 +43,7 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary,
     public setDefaultSpy<K extends KA>(
         key: K,
         fnc: A[K],
-    ): SpyManager<A> {
+    ): Spymaster<A> {
         const spyProxy = this.buildSpyProxy(fnc);
 
         this.spy_proxies.set(key, spyProxy);
@@ -62,7 +62,7 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary,
     public setCurrentSpy<K extends KA>(
         key: K,
         fnc: A[K],
-    ): SpyManager<A> {
+    ): Spymaster<A> {
         const spy_proxy = this.get(key);
 
         const spy: SinonSpy<Parameters<A[K]>, ReturnType<A[K]>> = fake(fnc) as any;
@@ -74,7 +74,7 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary,
 
     public restoreDefaultSpy<K extends KA>(
         key: K,
-    ): SpyManager<A> {
+    ): Spymaster<A> {
         const spy_proxy = this.get(key);
 
         spy_proxy.restoreDefaultSpy();
@@ -82,7 +82,7 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary,
         return this;
     }
 
-    public restoreDefaultSpies(): SpyManager<A> {
+    public restoreDefaultSpies(): Spymaster<A> {
         this.spy_proxies.forEach((spyProxy) => {
             spyProxy.restoreDefaultSpy();
         });
@@ -92,7 +92,7 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary,
 
     public resetHistory<K extends KA>(
         key: K,
-    ): SpyManager<A> {
+    ): Spymaster<A> {
         const spy_proxy = this.get(key);
 
         spy_proxy.resetHistory();
@@ -100,7 +100,7 @@ export abstract class SpyManager<A extends KeyToFunctionDictionary,
         return this;
     }
 
-    public resetHistories(): SpyManager<A> {
+    public resetHistories(): Spymaster<A> {
         this.spy_proxies.forEach((spyProxy) => {
             spyProxy.resetHistory();
         });

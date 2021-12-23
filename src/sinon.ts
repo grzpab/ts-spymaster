@@ -4,7 +4,7 @@ import {
 } from "sinon";
 import {
     KeyToFunctionDictionary,
-    SpyManager,
+    Spymaster,
     SpyProxy,
 } from "./abstractions";
 
@@ -48,11 +48,11 @@ export class SinonSpyProxy<A extends Array<any> = Array<any>, RV = any> implemen
     }
 }
 
-export class SinonSpyManager<A extends KeyToFunctionDictionary,
+export class SinonSpymaster<A extends KeyToFunctionDictionary,
     KA extends keyof A = keyof A,
     P extends Parameters<A[KA]> = Parameters<A[KA]>,
     R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
-> extends SpyManager<A, KA, P, R> {
+> extends Spymaster<A, KA, P, R> {
     protected buildSpyProxy(
         fnc: A[KA],
     ): SpyProxy<P, R> {

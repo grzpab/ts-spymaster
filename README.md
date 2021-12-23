@@ -28,47 +28,47 @@ The `SpyProxy` interface serves as a blueprint for a spy proxy. A spy proxy hold
 
 Developers can change the current spy at any time in runtime. Later, they can restore the proxy to use the default spy. This way the structure can proxy calls to the intended spy at the time. The spy may also reset the spy history.
 
-### SpyManager
-The `SpyManager` abstract class holds all the spy proxies. It allows for setting up proxies, having all proxies use default spies, and resetting the history of all the spies.
+### Spymaster
+The `Spymaster` abstract class holds all the spy proxies. It allows for setting up proxies, having all proxies use default spies, and resetting the history of all the spies.
 
 ## Components
 
 ### SinonSpyProxy
 The `SinonSpyProxy` class serves as an implementation of the `SpyProxy` interface for Sinon spies.
 
-### SinonSpyManager
-The `SinonSpyManager` serves as the implementation of the `SpyManager` class for Sinon spies.
+### SinonSpymaster
+The `SinonSpymaster` serves as the implementation of the `Spymaster` class for Sinon spies.
 
 ## Usage
 The following snippet uses the Chai library for asserting.
 
 ```typescript
-import { SinonSpyManager } from '@grzpab/ts-spymaster/sinon';
+import { SinonSpymaster } from '@grzpab/ts-spymaster';
 
 // the setup phase
-// setting up the spy manager and 
+// setting up the spy manager and default spies
 type Functions = Readonly<{
 	fnc: (n: number) => number,
 }>;
 
-const spyManager = new SinonSpyManager<Functions>();
-spyManager.setDefaultSpy('fnc', (n) => n);
+const spymaster = new SinonSpymaster<Functions>();
+spymaster.setDefaultSpy('fnc', (n) => n);
 
 // the pre-test phase
 // just to show that the current spy is the default spy
-const defaultSpy = spyManager.getCurrentSpy('fnc');
+const defaultSpy = spymaster.getCurrentSpy('fnc');
 
 assert.equal(defaultSpy(10), 10);
 
 // the test phase
 // changing the current spy
-spyManager.setCurrentSpy('fnc', (n) => 2*n);
+spymaster.setCurrentSpy('fnc', (n) => 2*n);
 
-const currentSpy = spyManager.getCurrentSpy('fnc');
+const currentSpy = spymaster.getCurrentSpy('fnc');
 
 assert.equal(currentSpy(10), 20);
 
-// the post-phase phase
+// the post-test phase
 // restoring the default spy
-spyManager.restoreDefaultSpy('fnc');
+spymaster.restoreDefaultSpy('fnc');
 ```

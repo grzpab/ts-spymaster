@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { SinonSpyManager } from "../src/sinon";
+import { SinonSpymaster } from "../src/sinon";
 
 class MochaMock<F extends () => void> {
     private readonly describesContainingIts: Array<Array<F>> = [];
@@ -76,23 +76,23 @@ describe("MochaMock with hooks", () => {
             ) => number;
         }>;
 
-        const innerSpyManager = new SinonSpyManager<InnerFunctions>();
+        const innerSpymaster = new SinonSpymaster<InnerFunctions>();
 
-        innerSpyManager.setDefaultSpy(
+        innerSpymaster.setDefaultSpy(
             "sum",
             (
                 a,
                 b,
             ) => a + b,
         );
-        innerSpyManager.setDefaultSpy(
+        innerSpymaster.setDefaultSpy(
             "multiply",
             (
                 a,
                 b,
             ) => a * b,
         );
-        innerSpyManager.setDefaultSpy(
+        innerSpymaster.setDefaultSpy(
             "power",
             (
                 a,
@@ -101,9 +101,9 @@ describe("MochaMock with hooks", () => {
         );
 
         const innerFunctions: InnerFunctions = {
-            sum: innerSpyManager.getCurrentSpy("sum"),
-            multiply: innerSpyManager.getCurrentSpy("multiply"),
-            power: innerSpyManager.getCurrentSpy("power"),
+            sum: innerSpymaster.getCurrentSpy("sum"),
+            multiply: innerSpymaster.getCurrentSpy("multiply"),
+            power: innerSpymaster.getCurrentSpy("power"),
         };
 
         const call_inner_functions = (): number => {
@@ -125,32 +125,32 @@ describe("MochaMock with hooks", () => {
             afterAll: () => void,
         }>;
 
-        const outerSpyManager = new SinonSpyManager<OuterFunctions>();
+        const outerSpymaster = new SinonSpymaster<OuterFunctions>();
 
-        outerSpyManager.setDefaultSpy("beforeAll", () => {
+        outerSpymaster.setDefaultSpy("beforeAll", () => {
 
         });
 
-        outerSpyManager.setDefaultSpy("beforeEach", () => {
+        outerSpymaster.setDefaultSpy("beforeEach", () => {
         });
 
-        outerSpyManager.setDefaultSpy("afterEach", () => {
-            innerSpyManager.restoreDefaultSpies();
+        outerSpymaster.setDefaultSpy("afterEach", () => {
+            innerSpymaster.restoreDefaultSpies();
         });
 
-        outerSpyManager.setDefaultSpy("afterAll", () => {
+        outerSpymaster.setDefaultSpy("afterAll", () => {
         });
 
         const mochaMock = new MochaMock();
 
-        mochaMock.beforeAll(outerSpyManager.getCurrentSpy("beforeAll"));
-        mochaMock.beforeEach(outerSpyManager.getCurrentSpy("beforeEach"));
-        mochaMock.afterEach(outerSpyManager.getCurrentSpy("afterEach"));
-        mochaMock.afterAll(outerSpyManager.getCurrentSpy("afterAll"));
+        mochaMock.beforeAll(outerSpymaster.getCurrentSpy("beforeAll"));
+        mochaMock.beforeEach(outerSpymaster.getCurrentSpy("beforeEach"));
+        mochaMock.afterEach(outerSpymaster.getCurrentSpy("afterEach"));
+        mochaMock.afterAll(outerSpymaster.getCurrentSpy("afterAll"));
 
         mochaMock.describe("test describe", () => {
             mochaMock.it("test it", () => {
-                innerSpyManager.setCurrentSpy(
+                innerSpymaster.setCurrentSpy(
                     "sum",
                     () => 0,
                 );
@@ -159,7 +159,7 @@ describe("MochaMock with hooks", () => {
             });
 
             mochaMock.it("test it", () => {
-                innerSpyManager.setCurrentSpy(
+                innerSpymaster.setCurrentSpy(
                     "multiply",
                     () => -1,
                 );
@@ -170,7 +170,7 @@ describe("MochaMock with hooks", () => {
 
         mochaMock.describe("test describe", () => {
             mochaMock.it("test it", () => {
-                innerSpyManager.setCurrentSpy(
+                innerSpymaster.setCurrentSpy(
                     "power",
                     () => 10,
                 );
@@ -182,37 +182,37 @@ describe("MochaMock with hooks", () => {
         mochaMock.run();
 
         assert.equal(
-            innerSpyManager.getCurrentSpy("sum").callCount,
+            innerSpymaster.getCurrentSpy("sum").callCount,
             2,
         );
 
         assert.equal(
-            innerSpyManager.getCurrentSpy("multiply").callCount,
+            innerSpymaster.getCurrentSpy("multiply").callCount,
             2,
         );
 
         assert.equal(
-            innerSpyManager.getCurrentSpy("power").callCount,
+            innerSpymaster.getCurrentSpy("power").callCount,
             2,
         );
 
         assert.equal(
-            outerSpyManager.getCurrentSpy("beforeAll").callCount,
+            outerSpymaster.getCurrentSpy("beforeAll").callCount,
             1,
         );
 
         assert.equal(
-            outerSpyManager.getCurrentSpy("beforeEach").callCount,
+            outerSpymaster.getCurrentSpy("beforeEach").callCount,
             3,
         );
 
         assert.equal(
-            outerSpyManager.getCurrentSpy("afterEach").callCount,
+            outerSpymaster.getCurrentSpy("afterEach").callCount,
             3,
         );
 
         assert.equal(
-            outerSpyManager.getCurrentSpy("afterAll").callCount,
+            outerSpymaster.getCurrentSpy("afterAll").callCount,
             1,
         );
     });

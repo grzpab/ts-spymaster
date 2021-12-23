@@ -1,21 +1,21 @@
 import { assert } from "chai";
 import {
-    SinonSpyManager,
+    SinonSpymaster,
 } from "../src/sinon";
 
-describe("SpyManager", () => {
+describe("Spymaster", () => {
     type SpiedOnFunctions = Readonly<{
         fnc: (n: number) => number,
     }>;
 
 
     it("should allow for setting default, current spies and restoring the default ones", () => {
-        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
+        const spymaster = new SinonSpymaster<SpiedOnFunctions>();
 
         {
-            spyManager.setDefaultSpy("fnc", (n) => n);
+            spymaster.setDefaultSpy("fnc", (n) => n);
 
-            const spy = spyManager.getCurrentSpy("fnc");
+            const spy = spymaster.getCurrentSpy("fnc");
 
             const value = spy(10);
 
@@ -24,9 +24,9 @@ describe("SpyManager", () => {
         }
 
         {
-            spyManager.setCurrentSpy("fnc", (n) => 2 * n);
+            spymaster.setCurrentSpy("fnc", (n) => 2 * n);
 
-            const spy = spyManager.getCurrentSpy("fnc");
+            const spy = spymaster.getCurrentSpy("fnc");
 
             const value = spy(10);
 
@@ -35,9 +35,9 @@ describe("SpyManager", () => {
         }
 
         {
-            spyManager.restoreDefaultSpy("fnc");
+            spymaster.restoreDefaultSpy("fnc");
 
-            const spy = spyManager.getCurrentSpy("fnc");
+            const spy = spymaster.getCurrentSpy("fnc");
 
             const value = spy(10);
 
@@ -47,12 +47,12 @@ describe("SpyManager", () => {
     });
 
     it("should allow for restoring default spies", () => {
-        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
+        const spymaster = new SinonSpymaster<SpiedOnFunctions>();
 
         {
-            spyManager.setDefaultSpy("fnc", (n) => n / 2);
+            spymaster.setDefaultSpy("fnc", (n) => n / 2);
 
-            const spy = spyManager.getCurrentSpy("fnc");
+            const spy = spymaster.getCurrentSpy("fnc");
 
             const value = spy(10);
 
@@ -61,9 +61,9 @@ describe("SpyManager", () => {
         }
 
         {
-            spyManager.setCurrentSpy("fnc", (n) => 2 * n);
+            spymaster.setCurrentSpy("fnc", (n) => 2 * n);
 
-            const spy = spyManager.getCurrentSpy("fnc");
+            const spy = spymaster.getCurrentSpy("fnc");
 
             const value = spy(10);
 
@@ -72,9 +72,9 @@ describe("SpyManager", () => {
         }
 
         {
-            spyManager.restoreDefaultSpies();
+            spymaster.restoreDefaultSpies();
 
-            const spy = spyManager.getCurrentSpy("fnc");
+            const spy = spymaster.getCurrentSpy("fnc");
 
             const value = spy(10);
 
@@ -88,12 +88,12 @@ describe("SpyManager", () => {
             fnc: SpiedOnFunctions["fnc"],
         };
 
-        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
+        const spymaster = new SinonSpymaster<SpiedOnFunctions>();
 
-        spyManager.setDefaultSpy("fnc", (n) => n ** 2);
+        spymaster.setDefaultSpy("fnc", (n) => n ** 2);
 
         const service: Service = {
-            fnc: spyManager.getCurrentSpy("fnc"),
+            fnc: spymaster.getCurrentSpy("fnc"),
         };
 
         {
@@ -102,7 +102,7 @@ describe("SpyManager", () => {
             assert.equal(value, 81);
         }
 
-        spyManager.setCurrentSpy("fnc", (n) => n ** 3);
+        spymaster.setCurrentSpy("fnc", (n) => n ** 3);
 
         {
             const value = service.fnc(9);
@@ -110,7 +110,7 @@ describe("SpyManager", () => {
             assert.equal(value, 729);
         }
 
-        spyManager.restoreDefaultSpy("fnc");
+        spymaster.restoreDefaultSpy("fnc");
 
         {
             const value = service.fnc(9);
@@ -120,42 +120,42 @@ describe("SpyManager", () => {
     });
 
     it("should allow for resetting history", () => {
-        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
+        const spymaster = new SinonSpymaster<SpiedOnFunctions>();
 
-        spyManager.setDefaultSpy("fnc", (n) => n);
+        spymaster.setDefaultSpy("fnc", (n) => n);
 
         {
-            const spy = spyManager.getCurrentSpy("fnc");
+            const spy = spymaster.getCurrentSpy("fnc");
 
             const value = spy(10);
 
             assert.equal(value, 10);
             assert.equal(spy.callCount, 1);
 
-            spyManager.resetHistory("fnc");
+            spymaster.resetHistory("fnc");
 
             assert.equal(spy.callCount, 0);
         }
 
         {
-            const spy = spyManager.getCurrentSpy("fnc");
+            const spy = spymaster.getCurrentSpy("fnc");
 
             const value = spy(10);
 
             assert.equal(value, 10);
             assert.equal(spy.callCount, 1);
 
-            spyManager.resetHistories();
+            spymaster.resetHistories();
 
             assert.equal(spy.callCount, 0);
         }
     });
 
     it("should throw an error if the key is not defined yet", () => {
-        const spyManager = new SinonSpyManager<SpiedOnFunctions>();
+        const spymaster = new SinonSpymaster<SpiedOnFunctions>();
 
         assert.throw(() => {
-            spyManager.getCurrentSpy("fnc");
+            spymaster.getCurrentSpy("fnc");
         });
     });
 });
