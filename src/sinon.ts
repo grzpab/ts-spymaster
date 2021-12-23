@@ -60,4 +60,17 @@ export class SinonSpymaster<A extends KeyToFunctionDictionary,
 
         return new SinonSpyProxy(spy);
     }
+
+    public setCurrentSpy<K extends KA>(
+        key: K,
+        fnc: A[K],
+    ): SinonSpymaster<A, KA, P, R> {
+        const spy_proxy = this.get(key);
+
+        const spy: SinonSpy<Parameters<A[K]>, ReturnType<A[K]>> = fake(fnc) as any;
+
+        spy_proxy.setCurrentSpy(spy);
+
+        return this;
+    }
 }

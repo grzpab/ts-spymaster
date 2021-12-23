@@ -1,5 +1,4 @@
 import {
-    fake,
     SinonSpy,
 } from "sinon";
 
@@ -59,18 +58,10 @@ export abstract class Spymaster<A extends KeyToFunctionDictionary,
         return spy_proxy.getCurrentSpy();
     }
 
-    public setCurrentSpy<K extends KA>(
+    public abstract setCurrentSpy<K extends KA>(
         key: K,
         fnc: A[K],
-    ): Spymaster<A> {
-        const spy_proxy = this.get(key);
-
-        const spy: SinonSpy<Parameters<A[K]>, ReturnType<A[K]>> = fake(fnc) as any;
-
-        spy_proxy.setCurrentSpy(spy);
-
-        return this;
-    }
+    ): Spymaster<A, KA, P, R>;
 
     public restoreDefaultSpy<K extends KA>(
         key: K,
