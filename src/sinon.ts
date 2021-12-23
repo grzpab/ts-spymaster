@@ -6,7 +6,7 @@ import {
     KeyToFunctionDictionary,
     SpyManager,
     SpyProxy,
-} from "./index";
+} from "./abstractions";
 
 export class SinonSpyProxy<A extends Array<any> = Array<any>, RV = any> implements SpyProxy<A, RV> {
     private _currentSpy: SinonSpy<A, RV>;
