@@ -1,9 +1,9 @@
 import {
     fake,
     SinonSpy,
-} from 'sinon';
+} from "sinon";
 
-export interface SpyProxy<A extends any[], RV> {
+export interface SpyProxy<A extends Array<any>, RV> {
     setCurrentSpy(
         _currentSpy: SinonSpy<A, RV>,
     ): SpyProxy<A, RV>;
@@ -19,13 +19,12 @@ export type KeyToFunctionDictionary = Readonly<{
     [key in string]: (...args: any) => any;
 }>;
 
-export abstract class SpyManager<
-    A extends KeyToFunctionDictionary,
+export abstract class SpyManager<A extends KeyToFunctionDictionary,
     KA extends keyof A = keyof A,
     P extends Parameters<A[KA]> = Parameters<A[KA]>,
     R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
 > {
-    protected abstract buildSpyProxy(fnc: A[KA]) : SpyProxy<P, R>;
+    protected abstract buildSpyProxy(fnc: A[KA]): SpyProxy<P, R>;
 
     protected spy_proxies: Map<KA, SpyProxy<P, R>> = new Map();
 

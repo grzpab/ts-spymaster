@@ -1,14 +1,14 @@
 import {
     fake,
     SinonSpy,
-} from 'sinon';
+} from "sinon";
 import {
     KeyToFunctionDictionary,
     SpyManager,
     SpyProxy,
-} from './index';
+} from "./index";
 
-export class SinonSpyProxy<A extends any[] = any[], RV = any> implements SpyProxy<A, RV> {
+export class SinonSpyProxy<A extends Array<any> = Array<any>, RV = any> implements SpyProxy<A, RV> {
     private _currentSpy: SinonSpy<A, RV>;
 
     public constructor(
@@ -37,9 +37,7 @@ export class SinonSpyProxy<A extends any[] = any[], RV = any> implements SpyProx
                 target,
                 thisArg,
                 argArray,
-            ) => {
-                return this._currentSpy.apply(thisArg, argArray);
-            },
+            ) => this._currentSpy.apply(thisArg, argArray),
         });
     }
 
@@ -54,7 +52,7 @@ export class SinonSpyManager<A extends KeyToFunctionDictionary,
     KA extends keyof A = keyof A,
     P extends Parameters<A[KA]> = Parameters<A[KA]>,
     R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
-    > extends SpyManager<A, KA, P, R> {
+> extends SpyManager<A, KA, P, R> {
     protected buildSpyProxy(
         fnc: A[KA],
     ): SpyProxy<P, R> {

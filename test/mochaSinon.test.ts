@@ -1,15 +1,12 @@
-import { assert } from 'chai';
-import { SinonSpyManager } from '../src/sinon';
+import { assert } from "chai";
+import { SinonSpyManager } from "../src/sinon";
 
 class MochaMock<F extends () => void> {
-    private describesContainingIts: F[][] = [];
+    private readonly describesContainingIts: Array<Array<F>> = [];
     private _beforeAll: F | null = null;
     private _beforeEach: F | null = null;
     private _afterEach: F | null = null;
     private _afterAll: F | null = null;
-
-    public constructor() {
-    }
 
     public describe(
         title: string,
@@ -62,8 +59,8 @@ class MochaMock<F extends () => void> {
     }
 }
 
-describe.only('', () => {
-    it('', () => {
+describe("MochaMock with hooks", () => {
+    it("should work with inner and outer spy managers", () => {
         type InnerFunctions = Readonly<{
             sum: (
                 a: number,
@@ -82,21 +79,21 @@ describe.only('', () => {
         const innerSpyManager = new SinonSpyManager<InnerFunctions>();
 
         innerSpyManager.setDefaultSpy(
-            'sum',
+            "sum",
             (
                 a,
                 b,
             ) => a + b,
         );
         innerSpyManager.setDefaultSpy(
-            'multiply',
+            "multiply",
             (
                 a,
                 b,
             ) => a * b,
         );
         innerSpyManager.setDefaultSpy(
-            'power',
+            "power",
             (
                 a,
                 b,
@@ -104,9 +101,9 @@ describe.only('', () => {
         );
 
         const innerFunctions: InnerFunctions = {
-            sum: innerSpyManager.getCurrentSpy('sum'),
-            multiply: innerSpyManager.getCurrentSpy('multiply'),
-            power: innerSpyManager.getCurrentSpy('power'),
+            sum: innerSpyManager.getCurrentSpy("sum"),
+            multiply: innerSpyManager.getCurrentSpy("multiply"),
+            power: innerSpyManager.getCurrentSpy("power"),
         };
 
         const call_inner_functions = (): number => {
@@ -130,40 +127,40 @@ describe.only('', () => {
 
         const outerSpyManager = new SinonSpyManager<OuterFunctions>();
 
-        outerSpyManager.setDefaultSpy('beforeAll', () => {
+        outerSpyManager.setDefaultSpy("beforeAll", () => {
 
         });
 
-        outerSpyManager.setDefaultSpy('beforeEach', () => {
+        outerSpyManager.setDefaultSpy("beforeEach", () => {
         });
 
-        outerSpyManager.setDefaultSpy('afterEach', () => {
+        outerSpyManager.setDefaultSpy("afterEach", () => {
             innerSpyManager.restoreDefaultSpies();
         });
 
-        outerSpyManager.setDefaultSpy('afterAll', () => {
+        outerSpyManager.setDefaultSpy("afterAll", () => {
         });
 
         const mochaMock = new MochaMock();
 
-        mochaMock.beforeAll(outerSpyManager.getCurrentSpy('beforeAll'));
-        mochaMock.beforeEach(outerSpyManager.getCurrentSpy('beforeEach'));
-        mochaMock.afterEach(outerSpyManager.getCurrentSpy('afterEach'));
-        mochaMock.afterAll(outerSpyManager.getCurrentSpy('afterAll'));
+        mochaMock.beforeAll(outerSpyManager.getCurrentSpy("beforeAll"));
+        mochaMock.beforeEach(outerSpyManager.getCurrentSpy("beforeEach"));
+        mochaMock.afterEach(outerSpyManager.getCurrentSpy("afterEach"));
+        mochaMock.afterAll(outerSpyManager.getCurrentSpy("afterAll"));
 
-        mochaMock.describe('test describe', () => {
-            mochaMock.it('test it', () => {
+        mochaMock.describe("test describe", () => {
+            mochaMock.it("test it", () => {
                 innerSpyManager.setCurrentSpy(
-                    'sum',
+                    "sum",
                     () => 0,
                 );
 
                 assert.equal(call_inner_functions(), 0);
             });
 
-            mochaMock.it('test it', () => {
+            mochaMock.it("test it", () => {
                 innerSpyManager.setCurrentSpy(
-                    'multiply',
+                    "multiply",
                     () => -1,
                 );
 
@@ -171,10 +168,10 @@ describe.only('', () => {
             });
         });
 
-        mochaMock.describe('test describe', () => {
-            mochaMock.it('test it', () => {
+        mochaMock.describe("test describe", () => {
+            mochaMock.it("test it", () => {
                 innerSpyManager.setCurrentSpy(
-                    'power',
+                    "power",
                     () => 10,
                 );
 
@@ -185,37 +182,37 @@ describe.only('', () => {
         mochaMock.run();
 
         assert.equal(
-            innerSpyManager.getCurrentSpy('sum').callCount,
+            innerSpyManager.getCurrentSpy("sum").callCount,
             2,
         );
 
         assert.equal(
-            innerSpyManager.getCurrentSpy('multiply').callCount,
+            innerSpyManager.getCurrentSpy("multiply").callCount,
             2,
         );
 
         assert.equal(
-            innerSpyManager.getCurrentSpy('power').callCount,
+            innerSpyManager.getCurrentSpy("power").callCount,
             2,
         );
 
         assert.equal(
-            outerSpyManager.getCurrentSpy('beforeAll').callCount,
+            outerSpyManager.getCurrentSpy("beforeAll").callCount,
             1,
         );
 
         assert.equal(
-            outerSpyManager.getCurrentSpy('beforeEach').callCount,
+            outerSpyManager.getCurrentSpy("beforeEach").callCount,
             3,
         );
 
         assert.equal(
-            outerSpyManager.getCurrentSpy('afterEach').callCount,
+            outerSpyManager.getCurrentSpy("afterEach").callCount,
             3,
         );
 
         assert.equal(
-            outerSpyManager.getCurrentSpy('afterAll').callCount,
+            outerSpyManager.getCurrentSpy("afterAll").callCount,
             1,
         );
     });
