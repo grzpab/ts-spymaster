@@ -63,7 +63,7 @@ export abstract class Spymaster<A extends KeyToFunctionDictionary,
     public abstract setCurrentSpy<K extends KA>(
         key: K,
         fnc: A[K],
-    ): Spymaster<A, KA, P, R>;
+    ): Spymaster<A>;
 
     public restoreDefaultSpy<K extends KA>(
         key: K,

@@ -53,7 +53,6 @@ export class SinonSpymaster<A extends KeyToFunctionDictionary,
     P extends Parameters<A[KA]> = Parameters<A[KA]>,
     R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
     S extends SinonSpy<P, R> = SinonSpy<P, R>,
-    // SP extends SinonSpyProxy<P, R> = SinonSpyProxy<P, R>,
 > extends Spymaster<A, KA, P, R, S, SinonSpyProxy<P, R>> {
     protected buildSpyProxy(
         fnc: A[KA],
@@ -66,7 +65,7 @@ export class SinonSpymaster<A extends KeyToFunctionDictionary,
     public setCurrentSpy<K extends KA>(
         key: K,
         fnc: A[K],
-    ): SinonSpymaster<A, KA, P, R> {
+    ): SinonSpymaster<A> {
         const spy_proxy = this.get(key);
 
         const spy: SinonSpy<Parameters<A[K]>, ReturnType<A[K]>> = fake(fnc) as any;
@@ -82,17 +81,5 @@ export class SinonSpymaster<A extends KeyToFunctionDictionary,
         const spy_proxy = this.get(key);
 
         return spy_proxy.getCurrentSpy();
-    }
-
-    protected get<K extends KA>(
-        key: K,
-    ): SinonSpyProxy<P, R> {
-        const spy = this.spy_proxies.get(key);
-
-        if (!spy) {
-            throw new Error(`No spy found for the key "${key}"`);
-        }
-
-        return spy;
     }
 }
