@@ -1,1 +1,1 @@
-export * from './sinon';
+export * from "./sinon";

@@ -8,7 +8,7 @@ import {
     SpyProxy,
 } from "./abstractions";
 
-export class SinonSpyProxy<A extends Array<any> = Array<any>, RV = any> implements SpyProxy<A, RV> {
+export class SinonSpyProxy<A extends Array<any> = Array<any>, RV = any> implements SpyProxy<SinonSpy, A, RV> {
     private _currentSpy: SinonSpy<A, RV>;
 
     public constructor(
@@ -19,13 +19,13 @@ export class SinonSpyProxy<A extends Array<any> = Array<any>, RV = any> implemen
 
     public setCurrentSpy(
         _currentSpy: SinonSpy<A, RV>,
-    ): SpyProxy<A, RV> {
+    ): SpyProxy<SinonSpy, A, RV> {
         this._currentSpy = _currentSpy;
 
         return this;
     }
 
-    public restoreDefaultSpy(): SpyProxy<A, RV> {
+    public restoreDefaultSpy(): SpyProxy<SinonSpy, A, RV> {
         this._currentSpy = this._defaultSpy;
 
         return this;
@@ -41,7 +41,7 @@ export class SinonSpyProxy<A extends Array<any> = Array<any>, RV = any> implemen
         });
     }
 
-    public resetHistory(): SpyProxy<A, RV> {
+    public resetHistory(): SpyProxy<SinonSpy, A, RV> {
         this._currentSpy.resetHistory();
 
         return this;
@@ -52,10 +52,12 @@ export class SinonSpymaster<A extends KeyToFunctionDictionary,
     KA extends keyof A = keyof A,
     P extends Parameters<A[KA]> = Parameters<A[KA]>,
     R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
-> extends Spymaster<A, KA, P, R> {
+    S extends SinonSpy<P, R> = SinonSpy<P, R>,
+    // SP extends SinonSpyProxy<P, R> = SinonSpyProxy<P, R>,
+> extends Spymaster<A, KA, P, R, S, SinonSpyProxy<P, R>> {
     protected buildSpyProxy(
         fnc: A[KA],
-    ): SpyProxy<P, R> {
+    ): SinonSpyProxy<P, R> {
         const spy: SinonSpy<P, R> = fake(fnc) as any;
 
         return new SinonSpyProxy(spy);
@@ -72,5 +74,25 @@ export class SinonSpymaster<A extends KeyToFunctionDictionary,
         spy_proxy.setCurrentSpy(spy);
 
         return this;
+    }
+
+    public getCurrentSpy<K extends KA>(
+        key: K,
+    ): SinonSpy<Parameters<A[K]>, ReturnType<A[K]>> {
+        const spy_proxy = this.get(key);
+
+        return spy_proxy.getCurrentSpy();
+    }
+
+    protected get<K extends KA>(
+        key: K,
+    ): SinonSpyProxy<P, R> {
+        const spy = this.spy_proxies.get(key);
+
+        if (!spy) {
+            throw new Error(`No spy found for the key "${key}"`);
+        }
+
+        return spy;
     }
 }

@@ -1,17 +1,17 @@
-import {
-    SinonSpy,
-} from "sinon";
+interface Spy<A, RV> {
 
-export interface SpyProxy<A extends Array<any>, RV> {
+}
+
+export interface SpyProxy<S extends Spy<A, RV>, A extends Array<any>, RV> {
     setCurrentSpy(
-        _currentSpy: SinonSpy<A, RV>,
-    ): SpyProxy<A, RV>;
+        _currentSpy: S,
+    ): SpyProxy<S, A, RV>;
 
-    restoreDefaultSpy(): SpyProxy<A, RV>;
+    restoreDefaultSpy(): SpyProxy<S, A, RV>;
 
-    getCurrentSpy(): SinonSpy<A, RV>;
+    getCurrentSpy(): S;
 
-    resetHistory(): SpyProxy<A, RV>;
+    resetHistory(): SpyProxy<S, A, RV>;
 }
 
 export type KeyToFunctionDictionary = Readonly<{
@@ -22,14 +22,16 @@ export abstract class Spymaster<A extends KeyToFunctionDictionary,
     KA extends keyof A = keyof A,
     P extends Parameters<A[KA]> = Parameters<A[KA]>,
     R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
+    S extends Spy<P, R> = Spy<P, R>,
+    SP extends SpyProxy<Spy<P, R>, P, R> = SpyProxy<S, P, R>,
 > {
-    protected abstract buildSpyProxy(fnc: A[KA]): SpyProxy<P, R>;
+    protected abstract buildSpyProxy(fnc: A[KA]): SP;
 
-    protected spy_proxies: Map<KA, SpyProxy<P, R>> = new Map();
+    protected spy_proxies: Map<KA, SP> = new Map();
 
     protected get<K extends KA>(
         key: K,
-    ): SpyProxy<Parameters<A[K]>, ReturnType<A[K]>> {
+    ): SP {
         const spy = this.spy_proxies.get(key);
 
         if (!spy) {
@@ -52,7 +54,7 @@ export abstract class Spymaster<A extends KeyToFunctionDictionary,
 
     public getCurrentSpy<K extends KA>(
         key: K,
-    ): SinonSpy<Parameters<A[K]>, ReturnType<A[K]>> {
+    ): Spy<Parameters<A[K]>, ReturnType<A[K]>> {
         const spy_proxy = this.get(key);
 
         return spy_proxy.getCurrentSpy();

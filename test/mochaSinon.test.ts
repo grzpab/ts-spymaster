@@ -73,7 +73,7 @@ describe("MochaMock with hooks", () => {
             power: (
                 a: number,
                 b: number,
-            ) => number;
+            ) => string;
         }>;
 
         const innerSpymaster = new SinonSpymaster<InnerFunctions>();
@@ -97,7 +97,7 @@ describe("MochaMock with hooks", () => {
             (
                 a,
                 b,
-            ) => a ** b,
+            ) => String(a ** b),
         );
 
         const innerFunctions: InnerFunctions = {
@@ -106,7 +106,7 @@ describe("MochaMock with hooks", () => {
             power: innerSpymaster.getCurrentSpy("power"),
         };
 
-        const call_inner_functions = (): number => {
+        const call_inner_functions = (): string => {
             const { sum, multiply, power } = innerFunctions;
 
             return power(
@@ -155,7 +155,7 @@ describe("MochaMock with hooks", () => {
                     () => 0,
                 );
 
-                assert.equal(call_inner_functions(), 0);
+                assert.equal(call_inner_functions(), '0');
             });
 
             mochaMock.it("test it", () => {
@@ -164,7 +164,7 @@ describe("MochaMock with hooks", () => {
                     () => -1,
                 );
 
-                assert.equal(call_inner_functions(), 1);
+                assert.equal(call_inner_functions(), '1');
             });
         });
 
@@ -172,10 +172,10 @@ describe("MochaMock with hooks", () => {
             mochaMock.it("test it", () => {
                 innerSpymaster.setCurrentSpy(
                     "power",
-                    () => 10,
+                    () => '10',
                 );
 
-                assert.equal(call_inner_functions(), 10);
+                assert.equal(call_inner_functions(), '10');
             });
         });
 
