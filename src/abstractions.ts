@@ -1,4 +1,4 @@
-interface Spy<A, RV> {
+interface Spy<A extends Array<any>, RV> {
 
 }
 
@@ -19,11 +19,11 @@ export type KeyToFunctionDictionary = Readonly<{
 }>;
 
 export abstract class Spymaster<A extends KeyToFunctionDictionary,
-    KA extends keyof A = keyof A,
-    P extends Parameters<A[KA]> = Parameters<A[KA]>,
-    R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
-    S extends Spy<P, R> = Spy<P, R>,
-    SP extends SpyProxy<Spy<P, R>, P, R> = SpyProxy<S, P, R>,
+    KA extends keyof A = keyof A, // for aliasing
+    P extends Parameters<A[KA]> = Parameters<A[KA]>, // for aliasing
+    R extends ReturnType<A[KA]> = ReturnType<A[KA]>, // for aliasing
+    S extends Spy<P, R> = Spy<P, R>, // for aliasing
+    SP extends SpyProxy<Spy<P, R>, P, R> = SpyProxy<S, P, R>, // for aliasing
 > {
     protected abstract buildSpyProxy(fnc: A[KA]): SP;
 

@@ -49,10 +49,10 @@ export class SinonSpyProxy<A extends Array<any> = Array<any>, RV = any> implemen
 }
 
 export class SinonSpymaster<A extends KeyToFunctionDictionary,
-    KA extends keyof A = keyof A,
-    P extends Parameters<A[KA]> = Parameters<A[KA]>,
-    R extends ReturnType<A[KA]> = ReturnType<A[KA]>,
-    S extends SinonSpy<P, R> = SinonSpy<P, R>,
+    KA extends keyof A = keyof A, // for aliasing and parent class initialization
+    P extends Parameters<A[KA]> = Parameters<A[KA]>, // for aliasing and parent class initialization
+    R extends ReturnType<A[KA]> = ReturnType<A[KA]>, // for aliasing and parent class initialization
+    S extends SinonSpy<P, R> = SinonSpy<P, R>, // for aliasing and parent class initialization
 > extends Spymaster<A, KA, P, R, S, SinonSpyProxy<P, R>> {
     protected buildSpyProxy(
         fnc: A[KA],
